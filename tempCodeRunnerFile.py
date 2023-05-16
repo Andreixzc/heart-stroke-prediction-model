@@ -1,2 +1,1 @@
-k_fold(10, arvore_carregada, dataset)
-k_fold(10,random_forest,dataset)
+print(cross_val_score(arvore_carregada, X_treino, y_treino, cv=5, scoring='accuracy'))

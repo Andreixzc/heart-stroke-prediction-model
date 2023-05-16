@@ -21,13 +21,19 @@ import scipy.stats as st
 with open('ModelosTreinados/randomForest.pkl', 'rb') as f:
     random_forest = pickle.load(f)
 
+with open('ModelosTreinados/RedeNeural.pkl', 'rb') as f:
+    rede_neural = pickle.load(f)
+
+
 with open('ModelosTreinados/arvore.pkl', 'rb') as f:
     arvore_carregada = pickle.load(f)
 
 with open('BasePreProcessada/breast.pkl', 'rb') as f:
     dataset = pickle.load(f)
     # X_treino, X_teste, y_treino, y_teste = pickle.load(f)
-
+with open('BasePreProcessada/breast.pkl', 'rb') as f:
+    # dataset = pickle.load(f)
+    X_treino, X_teste, y_treino, y_teste = pickle.load(f)
 
 def interval_confidence(values):
     return st.t.interval(confidence=0.95, df=len(values)-1, loc=np.mean(values), scale=st.sem(values))
@@ -104,8 +110,13 @@ def k_fold(k, modelo, dataset):
     print("Intervalo de confiança do recall: ",calcular_media_colunas(recall_values))
     print("Intervalo de confiança da precision: ",calcular_media_colunas(precision_values))
 
-k_fold(10, arvore_carregada, dataset)
+# k_fold(10, arvore_carregada, dataset)
 k_fold(10,random_forest,dataset)
+# k_fold(10,rede_neural,dataset)
+
+print(cross_val_score(random_forest, X_treino, y_treino, cv=5, scoring='f1_macro'))
+# print(cross_val_score(arvore_carregada, X_treino, y_treino, cv=5, scoring='accuracy'))
+
 
 
 

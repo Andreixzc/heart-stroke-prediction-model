@@ -3,7 +3,7 @@ import pickle
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 
-with open('breast.pkl', 'rb') as f:
+with open('BasePreProcessada/breast.pkl', 'rb') as f:
   X_treino, X_teste, y_treino, y_teste = pickle.load(f)
 
 params = {
