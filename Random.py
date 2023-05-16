@@ -29,7 +29,7 @@ florest.fit(X_treino, y_treino)
 
 previsoes = florest.predict(X_teste)
 previsoes
-
+    
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
 accuracy_score(y_teste,previsoes)
 
