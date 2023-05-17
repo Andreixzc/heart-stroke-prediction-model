@@ -10,8 +10,12 @@ import numpy as np
 import pickle
 import scipy.stats as st
 
-with open('ModelosTreinados/rede_neural.pkl', 'rb') as f:
+with open('ModelosTreinados/rede_neural2.pkl', 'rb') as f:
     rede_neural = pickle.load(f)
+
+# with open('ModelosTreinados/rede_neural2.pkl', 'rb') as f:
+#     rede_neural = pickle.load(f)
+
 
 with open('ModelosTreinados/randomForest.pkl', 'rb') as f:
     random_forest = pickle.load(f)
