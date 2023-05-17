@@ -18,11 +18,11 @@ with open('ModelosTreinados/randomForest.pkl', 'rb') as f:
 with open('ModelosTreinados/arvore.pkl', 'rb') as f:
     arvore_carregada = pickle.load(f)
 
-# with open('BasePreProcessada/breast.pkl', 'rb') as f:
-#     dataset = pickle.load(f)
+with open('BasePreProcessada/breast.pkl', 'rb') as f:
+    dataset = pickle.load(f)
 
 with open('BasePreProcessada/breast_rede.pkl', 'rb') as f:
-    dataset = pickle.load(f)    
+    dataset_rede = pickle.load(f)    
     # X_treino, X_teste, y_treino, y_teste = pickle.load(f)
 
 with open('ModelosTreinados/tensor.pkl', 'rb') as f:
@@ -103,13 +103,12 @@ def k_fold(k, modelo, dataset):
     print("Intervalo de confiança do recall: ",calcular_media_colunas(recall_values))
     print("Intervalo de confiança da precision: ",calcular_media_colunas(precision_values))
 
-# k_fold(10, arvore_carregada, dataset)
-# k_fold(5,random_forest,dataset)
-# k_fold(10,rede_neural,dataset)
-rf = RandomForestClassifier(n_estimators=100, random_state=42)
-# k_fold(5,rf,dataset)
-k_fold(5,rede_neural,dataset)
-# k_fold(10,rede_neural,dataset)
+print("Decision Tree")
+k_fold(5, arvore_carregada, dataset)
+print("Randomn forest")
+k_fold(5,random_forest,dataset)
+print("Rede Neural")
+k_fold(5,rede_neural,dataset_rede)
 
 
 
