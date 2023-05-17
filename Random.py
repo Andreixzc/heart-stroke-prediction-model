@@ -31,15 +31,15 @@ previsoes = florest.predict(X_teste)
 previsoes
     
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
-accuracy_score(y_teste,previsoes)
+# accuracy_score(y_teste,previsoes)
 
-from yellowbrick.classifier import ConfusionMatrix
-cm = ConfusionMatrix(florest)
-cm.fit(X_treino, y_treino)
-cm.score(X_teste, y_teste)
+# from yellowbrick.classifier import ConfusionMatrix
+# cm = ConfusionMatrix(florest)
+# cm.fit(X_treino, y_treino)
+# cm.score(X_teste, y_teste)
 
 print(classification_report(y_teste, previsoes))
 
 print(florest.feature_importances_) 
-with open('randomForest.pkl', 'wb') as f:
+with open('ModelosTreinados/randomForest.pkl', 'wb') as f:
     pickle.dump(florest, f)
