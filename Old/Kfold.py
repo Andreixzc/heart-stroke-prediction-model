@@ -9,8 +9,7 @@ import copy
 import numpy as np
 import pickle
 import scipy.stats as st
-with open('ModelosTreinados/rede_neural2.pkl', 'rb') as f:
-    rede_neural= pickle.load(f)
+
 
 with open('ModelosTreinados/randomForest.pkl', 'rb') as f:
     random_forest = pickle.load(f)
@@ -18,15 +17,9 @@ with open('ModelosTreinados/randomForest.pkl', 'rb') as f:
 with open('ModelosTreinados/arvore.pkl', 'rb') as f:
     arvore_carregada = pickle.load(f)
 
-with open('BasePreProcessada/breast.pkl', 'rb') as f:
+with open('comUnder.pkl', 'rb') as f:
     dataset = pickle.load(f)
 
-with open('BasePreProcessada/breast_rede.pkl', 'rb') as f:
-    dataset_rede = pickle.load(f)    
-    # X_treino, X_teste, y_treino, y_teste = pickle.load(f)
-
-with open('ModelosTreinados/tensor.pkl', 'rb') as f:
-    tensor = pickle.load(f)
 
 def interval_confidence(values):
     return st.t.interval(confidence=0.95, df=len(values)-1, loc=np.mean(values), scale=st.sem(values))
@@ -107,8 +100,7 @@ print("Decision Tree")
 k_fold(5, arvore_carregada, dataset)
 print("Randomn forest")
 k_fold(5,random_forest,dataset)
-print("Rede Neural")
-k_fold(5,rede_neural,dataset_rede)
+
 
 
 

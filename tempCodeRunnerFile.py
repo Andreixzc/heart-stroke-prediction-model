@@ -1,1 +1,0 @@
-print(cross_val_score(arvore_carregada, X_treino, y_treino, cv=5, scoring='accuracy'))

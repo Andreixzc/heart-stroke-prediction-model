@@ -3,7 +3,7 @@ import pickle
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 
-with open('BasePreProcessada/breast.pkl', 'rb') as f:
+with open('comUnder.pkl', 'rb') as f:
   X_treino, X_teste, y_treino, y_teste = pickle.load(f)
 
 params = {
@@ -31,12 +31,12 @@ previsoes = florest.predict(X_teste)
 previsoes
     
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
-# accuracy_score(y_teste,previsoes)
+accuracy_score(y_teste,previsoes)
 
-# from yellowbrick.classifier import ConfusionMatrix
-# cm = ConfusionMatrix(florest)
-# cm.fit(X_treino, y_treino)
-# cm.score(X_teste, y_teste)
+from yellowbrick.classifier import ConfusionMatrix
+cm = ConfusionMatrix(florest)
+cm.fit(X_treino, y_treino)
+cm.score(X_teste, y_teste)
 
 print(classification_report(y_teste, previsoes))
 

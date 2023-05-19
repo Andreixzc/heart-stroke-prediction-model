@@ -6,9 +6,11 @@ from sklearn import tree
 import matplotlib.pyplot as plt
 import pickle
 
-with open('BasePreProcessada/breast.pkl', 'rb') as f:
+with open('comUnder.pkl', 'rb') as f:
     X_treino, X_teste, y_treino, y_teste = pickle.load(f)
 
+
+    print(X_treino)
     params = {
         'criterion':  ['gini', 'entropy'],
         'max_depth':  [None, 2, 4, 6, 8, 10],
@@ -40,11 +42,11 @@ plt.savefig('figuras/matriz_confusao.png')
 print(classification_report(y_teste, previsoes))
 
 
-# Plotando a árvore
-previsores = ['gender', 'age', 'hypertension', 'heart_disease', 'ever_merried', 'ever_merried', 'Residence_type', 'avg_glucose_level', 'bmi', 'smoking_status']
-figura, eixos = plt.subplots(nrows=1, ncols=1, figsize=(10,10))
-tree.plot_tree(arvore, feature_names=previsores, filled= True)
-plt.savefig('figuras/matriz_confusao.pngtree.png')
+# # Plotando a árvore
+# previsores = ['gender', 'age', 'hypertension', 'heart_disease', 'ever_merried', 'ever_merried', 'Residence_type', 'avg_glucose_level', 'bmi', 'smoking_status']
+# figura, eixos = plt.subplots(nrows=1, ncols=1, figsize=(10,10))
+# tree.plot_tree(arvore, feature_names=previsores, filled= True)
+# plt.savefig('figuras/matriz_confusao.pngtree.png')
 
 # Salvando a árvore em um pkl
 with open('ModelosTreinados/arvore.pkl', 'wb') as f:
