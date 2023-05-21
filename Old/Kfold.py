@@ -17,7 +17,7 @@ with open('ModelosTreinados/randomForest.pkl', 'rb') as f:
 with open('ModelosTreinados/arvore.pkl', 'rb') as f:
     arvore_carregada = pickle.load(f)
 
-with open('comUnder.pkl', 'rb') as f:
+with open('Smote.pkl', 'rb') as f:
     dataset = pickle.load(f)
 
 
@@ -97,9 +97,9 @@ def k_fold(k, modelo, dataset):
     print("Intervalo de confiança da precision: ",calcular_media_colunas(precision_values))
 
 print("Decision Tree")
-k_fold(5, arvore_carregada, dataset)
-print("Randomn forest")
-k_fold(5,random_forest,dataset)
+k_fold(5, random_forest, dataset)
+# print("Randomn forest")
+# k_fold(5,random_forest,dataset)
 
 
 
