@@ -86,7 +86,20 @@ def identificar_colunas_correlacionadas(dataset, limite_correlacao):
 
     return colunas_correlacionadas
 
+def identify_redundant_features(df):
+    target_column = df.columns[-1]  # Última coluna é o atributo de classe
 
+    # Calcula a matriz de correlação
+    corr_matrix = df.corr()
+
+    # Filtra as features com correlação maior que um limite pré-definido
+    correlation_threshold = 0.8  # Define o limite de correlação (ajuste conforme necessário)
+    redundant_features = []
+    for feature in df.columns[:-1]:  # Exclui a coluna do atributo de classe
+        if abs(corr_matrix.loc[feature, target_column]) > correlation_threshold:
+            redundant_features.append(feature)
+
+    return redundant_features
 
 # check_missing_attributes(base) #chamando a funcao
 
@@ -133,6 +146,7 @@ dataset_filtrado, quantidade_removidas = remove_instancias_semelhantes(df_novo)
 print("Quantidade de instâncias removidas:", quantidade_removidas)
 
 print(identificar_colunas_correlacionadas(df_novo,0.8))
+print(identify_redundant_features(df_novo))
 print(len(df_novo.columns))
 
 # Exibe o dataset filtrado
