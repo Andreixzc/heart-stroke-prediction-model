@@ -33,7 +33,7 @@ def calcular_media_colunas(matriz):
     media_colunas = np.mean(matriz, axis=0)
     return media_colunas.tolist()
 
-def k_fold1(k, modelo, dataset):
+def     k_fold1(k, modelo, dataset):
     # x, x_test, y, y_test
     melhor = 0
     x = dataset[0]
@@ -145,18 +145,8 @@ def k_fold_cross_validation(k, model, dataset):
 
     return scores
 
-
-
 def interval_confidence(values):
     return st.t.interval(confidence=0.95, df=len(values)-1, loc=np.mean(values), scale=st.sem(values))
-
-
-
-
-
-
-
-
 
 def k_fold_cross_validation_com_grid(k, model, dataset):
     X_train = dataset[0]  # Características de treino
@@ -220,6 +210,9 @@ def k_fold_cross_validation_com_grid2(k, model, dataset):
     X_test = dataset[1]  # Características de teste
     y_train = dataset[2]  # Rótulos de treino
     y_test = dataset[3]  # Rótulos de teste
+    precision_values = []  # Lista vazia para armazenar os valores de precision
+    recall_values = []  # Lista vazia para armazenar os valores de recall
+    fscore_values = []  # Lista vazia para armazenar os valores de fscore
 
     skf = StratifiedKFold(n_splits=k, shuffle=True)  # Divisão em k folds estratificados
 
@@ -257,14 +250,18 @@ def k_fold_cross_validation_com_grid2(k, model, dataset):
         y_pred = model.predict(X_val_fold)
         score = model.score(X_val_fold, y_val_fold)
         scores.append(score)
+        precision, recall, fscore, support = precision_recall_fscore_support(y_val_fold, y_pred, average=None)
+        precision_values.append(precision)  # Adicionar precision à lista
+        recall_values.append(recall)  # Adicionar recall à lista
+        fscore_values.append(fscore)  # Adicionar fscore à lista
 
-        # Métricas de classificação do fold
-        f1 = f1_score(y_val_fold, y_pred, average=None)
-        precision = precision_score(y_val_fold, y_pred, average=None)
-        recall = recall_score(y_val_fold, y_pred, average=None)
-        f1_scores.append(f1)
-        precision_scores.append(precision)
-        recall_scores.append(recall)
+        # # Métricas de classificação do fold
+        # f1 = f1_score(y_val_fold, y_pred, average=None)
+        # precision = precision_score(y_val_fold, y_pred, average=None)
+        # recall = recall_score(y_val_fold, y_pred, average=None)
+        # f1_scores.append(f1)
+        # precision_scores.append(precision)
+        # recall_scores.append(recall)
 
         # Relatório de classificação do fold
         print(f"Fold {len(scores)}:")
@@ -288,38 +285,28 @@ def k_fold_cross_validation_com_grid2(k, model, dataset):
     mean_f1_scores = [sum(scores) / len(scores) for scores in zip(*f1_scores)]
     mean_precision_scores = [sum(scores) / len(scores) for scores in zip(*precision_scores)]
     mean_recall_scores = [sum(scores) / len(scores) for scores in zip(*recall_scores)]
+    
 
-    # Exibição das médias
-    print("Média do F1-score para cada classe:")
-    print(mean_f1_scores)
-    print("------------------------------")
-    print("Média da precisão para cada classe:")
-    print(mean_precision_scores)
-    print("------------------------------")
-    print("Média do recall para cada classe:")
-    print(mean_recall_scores)
-    print("------------------------------")
-
-    return scores, f1_scores, precision_scores, recall_scores
+    # Exibição das médias e intervalos de confiança
+    print("Intervalo de confiança do Fscore: ",calcular_media_colunas(fscore_values))
+    print("Intervalo de confiança do recall: ",calcular_media_colunas(recall_values))
+    print("Intervalo de confiança da precision: ",calcular_media_colunas(precision_values))
+    print("--------------------------------------------------------------------")
+    print("Media recall superior e inferior:",mean_recall_scores)
+    print("Media fscore superior e inferior:",mean_f1_scores)
+    print("Media precision superior e inferior:",mean_precision_scores)
 
 
 
 
 
-
-
-
+    
 
 
 rf = RandomForestClassifier()
 dt = DecisionTreeClassifier()
 
-
-print("Decision Tree")
-# print(k_fold_cross_validation_com_grid2(5,dt,dataset))
-scores, f1_scores, precision_scores, recall_scores = k_fold_cross_validation_com_grid(5, dt, dataset)
-print(scores)
-print(f1_scores)
+k_fold_cross_validation_com_grid2(5, dt, dataset)
 # print(interval_confidence(k_fold_cross_validation_com_grid(5,dt,dataset)))
 
 
