@@ -117,7 +117,7 @@ def k_fold_cross_validation(k, model, dataset):
         # Undersampling NearMiss nos dados de treino do fold
         nm = NearMiss(version=2)
         X_train_resampled, y_train_resampled = nm.fit_resample(X_train_fold, y_train_fold)
-        print(np.unique(y_train_resampled,return_counts=True))
+
 
         # Treinamento do modelo
         model.fit(X_train_resampled, y_train_resampled)
@@ -143,6 +143,9 @@ def k_fold_cross_validation(k, model, dataset):
     print("------------------------------")
 
     return scores
+
+def interval_confidence(values):
+    return st.t.interval(confidence=0.95, df=len(values)-1, loc=np.mean(values), scale=st.sem(values))
 
 rf = RandomForestClassifier(n_estimators=100, random_state=42)
 dt = DecisionTreeClassifier()
