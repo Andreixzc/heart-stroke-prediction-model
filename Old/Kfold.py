@@ -307,6 +307,7 @@ rf = RandomForestClassifier()
 dt = DecisionTreeClassifier()
 
 k_fold_cross_validation_com_grid2(5, dt, dataset)
+k_fold_cross_validation_com_grid2(5, rf, dataset)
 # print(interval_confidence(k_fold_cross_validation_com_grid(5,dt,dataset)))
 
 
