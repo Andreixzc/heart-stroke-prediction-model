@@ -3,7 +3,7 @@ import pickle
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 
-with open('Smote.pkl', 'rb') as f:
+with open('raw.pkl', 'rb') as f:
   X_treino, X_teste, y_treino, y_teste = pickle.load(f)
 
 

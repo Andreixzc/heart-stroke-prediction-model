@@ -1,9 +1,12 @@
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import cross_val_predict, KFold, cross_val_score
+from sklearn.model_selection import StratifiedKFold, cross_val_predict, KFold, cross_val_score
 from sklearn.metrics import confusion_matrix, classification_report, accuracy_score, precision_recall_fscore_support
+from sklearn.tree import DecisionTreeClassifier
 from yellowbrick.classifier import ConfusionMatrix
 import matplotlib.pyplot as plt
+from imblearn.under_sampling import NearMiss
+from sklearn.base import clone
 from scipy import stats
 import copy
 import numpy as np
@@ -17,7 +20,7 @@ with open('ModelosTreinados/randomForest.pkl', 'rb') as f:
 with open('ModelosTreinados/arvore.pkl', 'rb') as f:
     arvore_carregada = pickle.load(f)
 
-with open('Smote.pkl', 'rb') as f:
+with open('raw.pkl', 'rb') as f:
     dataset = pickle.load(f)
 
 
@@ -29,7 +32,7 @@ def calcular_media_colunas(matriz):
     media_colunas = np.mean(matriz, axis=0)
     return media_colunas.tolist()
 
-def k_fold(k, modelo, dataset):
+def k_fold1(k, modelo, dataset):
     # x, x_test, y, y_test
     melhor = 0
     x = dataset[0]
@@ -96,10 +99,58 @@ def k_fold(k, modelo, dataset):
     print("Intervalo de confiança do recall: ",calcular_media_colunas(recall_values))
     print("Intervalo de confiança da precision: ",calcular_media_colunas(precision_values))
 
+def k_fold_cross_validation(k, model, dataset):
+    X_train = dataset[0]  # Características de treino
+    X_test = dataset[1]  # Características de teste
+    y_train = dataset[2]  # Rótulos de treino
+    y_test = dataset[3]  # Rótulos de teste
+
+    skf = StratifiedKFold(n_splits=k, shuffle=True)  # Divisão em k folds estratificados
+    skf = KFold(n_splits=k, shuffle=True)
+
+    scores = []  # Lista para armazenar as métricas de cada fold
+
+    for train_index, val_index in skf.split(X_train, y_train):
+        X_train_fold, X_val_fold = X_train[train_index], X_train[val_index]  # Dados de treino e validação do fold
+        y_train_fold, y_val_fold = y_train[train_index], y_train[val_index]  # Rótulos de treino e validação do fold
+
+        # Undersampling NearMiss nos dados de treino do fold
+        nm = NearMiss(version=2)
+        X_train_resampled, y_train_resampled = nm.fit_resample(X_train_fold, y_train_fold)
+        print(np.unique(y_train_resampled,return_counts=True))
+
+        # Treinamento do modelo
+        model.fit(X_train_resampled, y_train_resampled)
+
+        # Avaliação do modelo no conjunto de validação do fold
+        y_pred = model.predict(X_val_fold)
+        score = model.score(X_val_fold, y_val_fold)
+        scores.append(score)
+
+        # Relatório de classificação do fold
+        print(f"Fold {len(scores)}:")
+        print(classification_report(y_val_fold, y_pred))
+        print("------------------------------")
+
+    # Avaliação final no conjunto de teste
+    y_pred_test = model.predict(X_test)
+    final_score = model.score(X_test, y_test)
+    scores.append(final_score)
+
+    # Relatório de classificação do conjunto de teste
+    print("Final Test Set:")
+    print(classification_report(y_test, y_pred_test))
+    print("------------------------------")
+
+    return scores
+
+rf = RandomForestClassifier(n_estimators=100, random_state=42)
+dt = DecisionTreeClassifier()
 print("Decision Tree")
-k_fold(5, random_forest, dataset)
+print(k_fold_cross_validation(5,dt,dataset))
 # print("Randomn forest")
-# k_fold(5,random_forest,dataset)
+# k_fold(5,random_forest,dataset)'
+#passar o modelo destreinado
 
 
 

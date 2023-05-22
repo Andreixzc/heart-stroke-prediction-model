@@ -6,7 +6,7 @@ from sklearn import tree
 import matplotlib.pyplot as plt
 import pickle
 
-with open('comOverSmote.pkl', 'rb') as f:
+with open('base.pkl', 'rb') as f:
     X_treino, X_teste, y_treino, y_teste = pickle.load(f)
 
 

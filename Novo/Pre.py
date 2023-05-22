@@ -15,11 +15,10 @@ from sklearn.compose import make_column_transformer
 from sklearn.impute import SimpleImputer
 from sklearn.pipeline import Pipeline
 from sklearn.tree import export_graphviz
-import graphviz
 base = pd.read_csv('Datasets/strokeMod.csv', na_values=["Unknown", "N/A"])
 #Retirada manual de registro unico com sexo marcado como 'outro'
 
-print(np.unique(base['stroke'], return_counts=True))
+# print(np.unique(base['stroke'], return_counts=True))
 
 
 # label_values, label_count = np.unique(base['stroke'],return_counts=True)
@@ -88,9 +87,13 @@ y_base = df_novo.iloc[:, 19].values # Y_base contem os labels
 # print(np.unique(y_base,return_counts=True)) # dados balanceados
 
 
-print(np.unique(y_base, return_counts=True))
+# print(np.unique(y_base, return_counts=True))
 
 x_train, x_test, y_train, y_test = train_test_split(x_base, y_base)
+import pickle
+with open('raw.pkl', 'wb') as f:
+  pickle.dump([x_train,x_test,y_train,y_test], f)
+
 def reportSample(x_resampled,y_resampled,name):
     print(name)
     from sklearn.ensemble import RandomForestClassifier
@@ -106,29 +109,34 @@ def reportSample(x_resampled,y_resampled,name):
     print("AUC = ",auc)
 
 #RandomOverSampler
-from imblearn.over_sampling import RandomOverSampler
-over_sampler = RandomOverSampler(sampling_strategy=0.5)
-x_resampled, y_resampled = over_sampler.fit_resample(x_train, y_train)
-reportSample(x_resampled,y_resampled,"Random over sampler")
+# from imblearn.over_sampling import RandomOverSampler
+# over_sampler = RandomOverSampler(sampling_strategy=0.5)
+# x_resampled, y_resampled = over_sampler.fit_resample(x_train, y_train)
+# reportSample(x_resampled,y_resampled,"Random over sampler")
 
 
 
-#NearMiss
+# NearMiss
 from imblearn.under_sampling import NearMiss
-nearmiss = NearMiss(version=2,sampling_strategy='majority')
+nearmiss = NearMiss(version=2)
+print("Antes do resample:")
+print(np.unique(y_train,return_counts=True))
 x_resampled, y_resampled = nearmiss.fit_resample(x_train, y_train)
+print("Depois do resample:")
+print(np.unique(y_resampled,return_counts=True))
 reportSample(x_resampled,y_resampled,"NearMiss underSample")
 
 
-from imblearn.over_sampling import SMOTE
-sm = SMOTE(random_state=42)
-x_resampled,y_resampled = sm.fit_resample(x_train,y_train)
-reportSample(x_resampled,y_resampled,"Smote over sampling")
+# from imblearn.over_sampling import SMOTE
+# sm = SMOTE(random_state=42)
+# x_resampled,y_resampled = sm.fit_resample(x_train,y_train)
+# reportSample(x_resampled,y_resampled,"Smote over sampling")
 
 
-# import pickle
-# with open('Smote.pkl', 'wb') as f:
-#   pickle.dump([x_resampled,x_test,y_resampled,y_test], f)
+import pickle
+with open('base.pkl', 'wb') as f:
+  pickle.dump([x_resampled,x_test,y_resampled,y_test], f)
+
 
 
 
