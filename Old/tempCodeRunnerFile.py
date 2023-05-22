@@ -1,1 +1,1 @@
-
+print(k_fold_cross_validation_com_grid(5,rf,dataset))

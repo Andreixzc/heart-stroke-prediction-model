@@ -1,6 +1,7 @@
+import pandas as pd
 from sklearn import metrics
 from sklearn.ensemble import RandomForestClassifier
-from sklearn.model_selection import StratifiedKFold, cross_val_predict, KFold, cross_val_score
+from sklearn.model_selection import GridSearchCV, StratifiedKFold, cross_val_predict, KFold, cross_val_score
 from sklearn.metrics import confusion_matrix, classification_report, accuracy_score, precision_recall_fscore_support
 from sklearn.tree import DecisionTreeClassifier
 from yellowbrick.classifier import ConfusionMatrix
@@ -144,13 +145,83 @@ def k_fold_cross_validation(k, model, dataset):
 
     return scores
 
+
+
 def interval_confidence(values):
     return st.t.interval(confidence=0.95, df=len(values)-1, loc=np.mean(values), scale=st.sem(values))
 
-rf = RandomForestClassifier(n_estimators=100, random_state=42)
+
+
+
+
+
+
+
+
+def k_fold_cross_validation_com_grid(k, model, dataset):
+    X_train = dataset[0]  # Características de treino
+    X_test = dataset[1]  # Características de teste
+    y_train = dataset[2]  # Rótulos de treino
+    y_test = dataset[3]  # Rótulos de teste
+
+    skf = StratifiedKFold(n_splits=k, shuffle=True)  # Divisão em k folds estratificados
+
+    scores = []  # Lista para armazenar as métricas de cada fold
+
+    params = {
+        'criterion':  ['gini', 'entropy'],
+        'max_features': [None, 'sqrt', 'log2', 0.2, 0.4, 0.6, 0.8],
+    }
+
+    for train_index, val_index in skf.split(X_train, y_train):
+        X_train_fold, X_val_fold = X_train[train_index], X_train[val_index]  # Dados de treino e validação do fold
+        y_train_fold, y_val_fold = y_train[train_index], y_train[val_index]  # Rótulos de treino e validação do fold
+
+        # Undersampling NearMiss nos dados de treino do fold
+        nm = NearMiss(version=2)
+        X_train_resampled, y_train_resampled = nm.fit_resample(X_train_fold, y_train_fold)
+
+        # GridSearch no fold
+        grid_search = GridSearchCV(estimator=model, param_grid=params, scoring='accuracy', cv=3)
+        grid_search.fit(X_train_resampled, y_train_resampled)
+
+        # Melhores hiperparâmetros encontrados
+        best_params = grid_search.best_params_
+
+        # Treinamento do modelo com os melhores hiperparâmetros
+        model.set_params(**best_params)
+        model.fit(X_train_resampled, y_train_resampled)
+
+        # Avaliação do modelo no conjunto de validação do fold
+        y_pred = model.predict(X_val_fold)
+        score = model.score(X_val_fold, y_val_fold)
+        scores.append(score)
+
+        # Relatório de classificação do fold
+        print(f"Fold {len(scores)}:")
+        print(classification_report(y_val_fold, y_pred))
+        print("------------------------------")
+
+    # Avaliação final no conjunto de teste
+    y_pred_test = model.predict(X_test)
+    final_score = model.score(X_test, y_test)
+    scores.append(final_score)
+
+    # Relatório de classificação do conjunto de teste
+    print("Final Test Set:")
+    print(classification_report(y_test, y_pred_test))
+    print("------------------------------")
+
+    return scores
+
+
+rf = RandomForestClassifier()
 dt = DecisionTreeClassifier()
+
+
 print("Decision Tree")
-print(k_fold_cross_validation(5,dt,dataset))
+# print(k_fold_cross_validation_com_grid(5,rf,dataset))
+# print(k_fold_cross_validation_com_grid(5,dt,dataset))
 # print("Randomn forest")
 # k_fold(5,random_forest,dataset)'
 #passar o modelo destreinado

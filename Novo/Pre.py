@@ -6,6 +6,7 @@ import plotly.express as px
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.metrics import classification_report, recall_score
 from sklearn.model_selection import KFold, train_test_split
+from sklearn.neighbors import NearestNeighbors
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.calibration import LabelEncoder
 from sklearn.compose import ColumnTransformer
@@ -13,6 +14,7 @@ from sklearn.naive_bayes import GaussianNB
 from sklearn.impute import SimpleImputer
 from sklearn.compose import make_column_transformer
 from sklearn.impute import SimpleImputer
+from scipy.spatial.distance import pdist, squareform
 from sklearn.pipeline import Pipeline
 from sklearn.tree import export_graphviz
 base = pd.read_csv('Datasets/strokeMod.csv', na_values=["Unknown", "N/A"])
@@ -29,6 +31,34 @@ base = pd.read_csv('Datasets/strokeMod.csv', na_values=["Unknown", "N/A"])
 
 
 # Funcao que mostra a quantidade de instancias com atributos ausentes:
+
+def remove_instancias_semelhantes(dataset):
+    # Calcula a matriz de distâncias entre as instâncias
+    dist_matrix = pdist(dataset.values, metric='euclidean')
+
+    # Converte a matriz de distâncias em uma matriz quadrada
+    dist_matrix_square = squareform(dist_matrix)
+
+    # Define um limite de distância para considerar instâncias como semelhantes
+    limite_distancia = 0.9  # Ajuste o valor conforme necessário
+
+    # Obtém os índices das instâncias semelhantes
+    indices_semelhantes = []
+    n_instancias = len(dataset)
+    for i in range(n_instancias):
+        for j in range(i+1, n_instancias):
+            if dist_matrix_square[i, j] <= limite_distancia:
+                indices_semelhantes.append(j)
+
+    # Remove as instâncias semelhantes do dataset
+    dataset_filtrado = dataset.drop(indices_semelhantes)
+
+    # Obtém a quantidade de instâncias removidas
+    quantidade_removidas = len(indices_semelhantes)
+
+    return dataset_filtrado, quantidade_removidas
+
+
 def check_missing_attributes(df):
     # Contagem de instâncias sem "smoking_status" e "bmi"
     count_both_missing = df[df['smoking_status'].isnull() & df['bmi'].isnull()].shape[0]
@@ -43,6 +73,20 @@ def check_missing_attributes(df):
     print("Proporção de instâncias positivas/negativas:")
     pos, total = np.unique(df['stroke'], return_counts=True)
     print(total)
+
+def identificar_colunas_correlacionadas(dataset, limite_correlacao):
+    # Obtém todas as colunas, exceto a última (atributo de classe)
+    colunas_entrada = dataset.columns[:-1]
+
+    # Calcula a matriz de correlação
+    matriz_correlacao = dataset[colunas_entrada].corr()
+
+    # Obtém as colunas com alta correlação em relação ao atributo de classificação
+    colunas_correlacionadas = matriz_correlacao.iloc[-1][abs(matriz_correlacao.iloc[-1]) > limite_correlacao].index.tolist()
+
+    return colunas_correlacionadas
+
+
 
 # check_missing_attributes(base) #chamando a funcao
 
@@ -81,6 +125,20 @@ df_codificado_com_nomes = pd.DataFrame(df_codificado, columns=colunas_transforma
 # print(df_codificado_com_nomes)
 
 df_novo = pd.DataFrame(df_codificado) #Convertendo a tabela codificada em um data frame.
+
+colunas = df_codificado_com_nomes.columns.tolist()
+dataset_filtrado, quantidade_removidas = remove_instancias_semelhantes(df_novo)
+
+# Exibe a quantidade de instâncias removidas
+print("Quantidade de instâncias removidas:", quantidade_removidas)
+
+print(identificar_colunas_correlacionadas(df_novo,0.8))
+print(len(df_novo.columns))
+
+# Exibe o dataset filtrado
+# print(dataset_filtrado)
+
+
 x_base = df_novo.iloc[:, 0:19].values # X_base contem os atributos normais da base de dados.
 y_base = df_novo.iloc[:, 19].values # Y_base contem os labels
 # print(np.unique(y_base,return_counts=True))
@@ -89,24 +147,24 @@ y_base = df_novo.iloc[:, 19].values # Y_base contem os labels
 
 # print(np.unique(y_base, return_counts=True))
 
-x_train, x_test, y_train, y_test = train_test_split(x_base, y_base)
-import pickle
-with open('raw.pkl', 'wb') as f:
-  pickle.dump([x_train,x_test,y_train,y_test], f)
+# x_train, x_test, y_train, y_test = train_test_split(x_base, y_base)
+# import pickle
+# with open('raw.pkl', 'wb') as f:
+#   pickle.dump([x_train,x_test,y_train,y_test], f)
 
-def reportSample(x_resampled,y_resampled,name):
-    print(name)
-    from sklearn.ensemble import RandomForestClassifier
-    from sklearn.metrics import classification_report, fbeta_score,roc_auc_score
-    rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
-    rf_classifier.fit(x_resampled,y_resampled)
-    from sklearn.metrics import accuracy_score
-    previsoes = rf_classifier.predict(x_test)
-    report = classification_report(y_test, previsoes)
-    probabilidades = rf_classifier.predict_proba(x_test)[:, 1]
-    auc = roc_auc_score(y_test, probabilidades)
-    print(report)
-    print("AUC = ",auc)
+# def reportSample(x_resampled,y_resampled,name):
+#     print(name)
+#     from sklearn.ensemble import RandomForestClassifier
+#     from sklearn.metrics import classification_report, fbeta_score,roc_auc_score
+#     rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
+#     rf_classifier.fit(x_resampled,y_resampled)
+#     from sklearn.metrics import accuracy_score
+#     previsoes = rf_classifier.predict(x_test)
+#     report = classification_report(y_test, previsoes)
+#     probabilidades = rf_classifier.predict_proba(x_test)[:, 1]
+#     auc = roc_auc_score(y_test, probabilidades)
+#     print(report)
+#     print("AUC = ",auc)
 
 #RandomOverSampler
 # from imblearn.over_sampling import RandomOverSampler
@@ -117,14 +175,14 @@ def reportSample(x_resampled,y_resampled,name):
 
 
 # NearMiss
-from imblearn.under_sampling import NearMiss
-nearmiss = NearMiss(version=2)
-print("Antes do resample:")
-print(np.unique(y_train,return_counts=True))
-x_resampled, y_resampled = nearmiss.fit_resample(x_train, y_train)
-print("Depois do resample:")
-print(np.unique(y_resampled,return_counts=True))
-reportSample(x_resampled,y_resampled,"NearMiss underSample")
+# from imblearn.under_sampling import NearMiss
+# nearmiss = NearMiss(version=2)
+# print("Antes do resample:")
+# print(np.unique(y_train,return_counts=True))
+# x_resampled, y_resampled = nearmiss.fit_resample(x_train, y_train)
+# print("Depois do resample:")
+# print(np.unique(y_resampled,return_counts=True))
+# reportSample(x_resampled,y_resampled,"NearMiss underSample")
 
 
 # from imblearn.over_sampling import SMOTE
@@ -133,9 +191,9 @@ reportSample(x_resampled,y_resampled,"NearMiss underSample")
 # reportSample(x_resampled,y_resampled,"Smote over sampling")
 
 
-import pickle
-with open('base.pkl', 'wb') as f:
-  pickle.dump([x_resampled,x_test,y_resampled,y_test], f)
+# import pickle
+# with open('base.pkl', 'wb') as f:
+#   pickle.dump([x_resampled,x_test,y_resampled,y_test], f)
 
 
 
