@@ -35,13 +35,10 @@ base = pd.read_csv('Datasets/strokeMod.csv', na_values=["Unknown", "N/A"])
 def remove_instancias_semelhantes(dataset):
     # Calcula a matriz de distâncias entre as instâncias
     dist_matrix = pdist(dataset.values, metric='euclidean')
-
     # Converte a matriz de distâncias em uma matriz quadrada
     dist_matrix_square = squareform(dist_matrix)
-
     # Define um limite de distância para considerar instâncias como semelhantes
     limite_distancia = 0.9  # Ajuste o valor conforme necessário
-
     # Obtém os índices das instâncias semelhantes
     indices_semelhantes = []
     n_instancias = len(dataset)
@@ -49,13 +46,10 @@ def remove_instancias_semelhantes(dataset):
         for j in range(i+1, n_instancias):
             if dist_matrix_square[i, j] <= limite_distancia:
                 indices_semelhantes.append(j)
-
     # Remove as instâncias semelhantes do dataset
     dataset_filtrado = dataset.drop(indices_semelhantes)
-
     # Obtém a quantidade de instâncias removidas
     quantidade_removidas = len(indices_semelhantes)
-
     return dataset_filtrado, quantidade_removidas
 
 
@@ -120,9 +114,6 @@ base = base.dropna(subset=['smoking_status'])
 
 
 colunas_categoricas = base[['gender', 'ever_married', 'work_type', 'Residence_type', 'smoking_status']]
-
-
-
 column_trans = make_column_transformer((OneHotEncoder(), ['gender', 'ever_married', 'work_type', 'Residence_type', 'smoking_status']), remainder='passthrough')
 df_codificado = column_trans.fit_transform(base)
 
@@ -140,9 +131,7 @@ df_codificado_com_nomes = pd.DataFrame(df_codificado, columns=colunas_transforma
 df_novo = pd.DataFrame(df_codificado) #Convertendo a tabela codificada em um data frame.
 
 colunas = df_codificado_com_nomes.columns.tolist()
-dataset_filtrado, quantidade_removidas = remove_instancias_semelhantes(df_novo)
-
-# Exibe a quantidade de instâncias removidas
+df_novo, quantidade_removidas = remove_instancias_semelhantes(df_novo)
 print("Quantidade de instâncias removidas:", quantidade_removidas)
 
 print(identificar_colunas_correlacionadas(df_novo,0.8))
@@ -152,9 +141,9 @@ print(len(df_novo.columns))
 # Exibe o dataset filtrado
 # print(dataset_filtrado)
 
-
 x_base = df_novo.iloc[:, 0:19].values # X_base contem os atributos normais da base de dados.
 y_base = df_novo.iloc[:, 19].values # Y_base contem os labels
+
 # print(np.unique(y_base,return_counts=True))
 # print(np.unique(y_base,return_counts=True)) # dados balanceados
 

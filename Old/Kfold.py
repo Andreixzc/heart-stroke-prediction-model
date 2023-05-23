@@ -33,7 +33,7 @@ def calcular_media_colunas(matriz):
     media_colunas = np.mean(matriz, axis=0)
     return media_colunas.tolist()
 
-def     k_fold1(k, modelo, dataset):
+def k_fold1(k, modelo, dataset):
     # x, x_test, y, y_test
     melhor = 0
     x = dataset[0]
@@ -254,14 +254,6 @@ def k_fold_cross_validation_com_grid2(k, model, dataset):
         precision_values.append(precision)  # Adicionar precision à lista
         recall_values.append(recall)  # Adicionar recall à lista
         fscore_values.append(fscore)  # Adicionar fscore à lista
-
-        # # Métricas de classificação do fold
-        # f1 = f1_score(y_val_fold, y_pred, average=None)
-        # precision = precision_score(y_val_fold, y_pred, average=None)
-        # recall = recall_score(y_val_fold, y_pred, average=None)
-        # f1_scores.append(f1)
-        # precision_scores.append(precision)
-        # recall_scores.append(recall)
 
         # Relatório de classificação do fold
         print(f"Fold {len(scores)}:")
