@@ -1,3 +1,4 @@
+import numpy as np
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
@@ -6,11 +7,11 @@ from sklearn import tree
 import matplotlib.pyplot as plt
 import pickle
 
-with open('base.pkl', 'rb') as f:
+with open('breast.pkl', 'rb') as f:
     X_treino, X_teste, y_treino, y_teste = pickle.load(f)
 
 
-    print(X_treino)
+
     params = {
         'criterion':  ['gini', 'entropy'],
         'max_depth':  [None, 2, 4, 6, 8, 10],
@@ -27,7 +28,11 @@ with open('base.pkl', 'rb') as f:
     grid.fit(X_treino, y_treino)#Procura os melhores parametros
     params_filtrados = grid.best_params_
 
-
+    print("len do treino:")
+    print(np.unique(y_treino, return_counts=True))
+    print("Len do teste")
+    print(np.unique(y_teste, return_counts=True))
+    
     arvore = DecisionTreeClassifier(max_depth = 3, criterion = params_filtrados.get('criterion'),max_features= params_filtrados.get("max_features"))
     arvore.fit(X_treino,y_treino)#Treinamos a arvore
     previsoes = arvore.predict(X_teste)#Utilizamos a arvore treinada para tentar prever novas entradas de dados

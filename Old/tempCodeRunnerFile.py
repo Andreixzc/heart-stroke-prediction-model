@@ -1,1 +1,3 @@
-print(k_fold_cross_validation_com_grid(5,rf,dataset))
+
+print("len do teste")
+print(np.unique(y_teste, return_counts=True))

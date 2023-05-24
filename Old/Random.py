@@ -1,17 +1,13 @@
 
 import pickle
+import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.model_selection import GridSearchCV
 
-with open('raw.pkl', 'rb') as f:
+with open('breast.pkl', 'rb') as f:
   X_treino, X_teste, y_treino, y_teste = pickle.load(f)
 
-
-
-
-
-
-
+    
 params = {
     'criterion':  ['gini', 'entropy'],
     'n_estimators':  [1, 2, 4, 6, 8, 10, 20],
@@ -25,6 +21,12 @@ florest = GridSearchCV(
     n_jobs=5,
     verbose=1,
 )
+
+print("len do treino:")
+print(np.unique(y_treino, return_counts=True))
+print("Len do teste")
+print(np.unique(y_teste, return_counts=True))
+
 
 florest.fit(X_treino, y_treino)
 params = florest.best_params_
@@ -78,11 +80,6 @@ print(classification_report(y_teste, previsoes))
 
 # # Salva a imagem
 # plt.savefig('classification_report.png')
-
-
-
-
-
 print(florest.feature_importances_) 
 with open('ModelosTreinados/randomForest.pkl', 'wb') as f:
     pickle.dump(florest, f)

@@ -6,8 +6,8 @@ import plotly.express as px
 from sklearn.naive_bayes import GaussianNB
 from sklearn.impute import SimpleImputer
 from sklearn.tree import export_graphviz
-import graphviz
-base = pd.read_csv('healthcare-dataset-stroke-data2.csv', na_values=["Unknown", "N/A"])
+# import graphviz
+base = pd.read_csv('Datasets/healthcare-dataset-stroke-data2.csv', na_values=["Unknown", "N/A"])
 # base = base.drop('id',axis=1) #Removendo coluna redundante (ID) da base.
 # print(base)
 
@@ -51,23 +51,39 @@ for i in range(7):
 # print(y_base[1])
 
 #Balanceia a base de dados duplicando aleatoriamete as instancias minoritarias da base de dados
-from imblearn.over_sampling import RandomOverSampler
-ros = RandomOverSampler(random_state=0)
-x_base, y_base = ros.fit_resample(x_base, y_base)
-np.unique(y_base, return_counts=True)
-sns.countplot(x = y_base)
-plt.savefig('figuras/proporcaoSimNaoBalanceada.png') # Salva o grafico.
+# from imblearn.over_sampling import RandomOverSampler #Não pode fazer o balanceamento no conjunto inteiro de dados.
+# ros = RandomOverSampler(random_state=0)
+# x_base, y_base = ros.fit_resample(x_base, y_base)
+# np.unique(y_base, return_counts=True)
+# sns.countplot(x = y_base)
+# plt.savefig('figuras/proporcaoSimNaoBalanceada.png') # Salva o grafico.
 
 
 from sklearn.model_selection import train_test_split
 #Chamamos a funcao train_test_split passando a base de dados sem o atributo de classe, e o atributo de classe
 #Essa funcao retorna os dados dividos para treino e para o teste.(A proporção é definida pelo parametro.)
 X_treino, X_teste, y_treino, y_teste = train_test_split(x_base, y_base, test_size = 0.20, random_state = 0)
-print(X_treino[0])
+print("len do treino antes do resample:")
+print(np.unique(y_treino, return_counts=True))
+
+
+from imblearn.over_sampling import RandomOverSampler #Não pode fazer o balanceamento no conjunto inteiro de dados.
+ros = RandomOverSampler(random_state=0)
+X_treino, y_treino = ros.fit_resample(x_base, y_base)
+np.unique(y_base, return_counts=True)
+sns.countplot(x = y_base)
+
+plt.savefig('figuras/proporcaoSimNaoBalanceada.png') # Salva o grafico.
+
 #Salvando arquivos separados em um arquivo pkl.
 import pickle
 with open('breast.pkl', 'wb') as f:
   pickle.dump([X_treino, X_teste, y_treino, y_teste], f)
 
+print("len do treino depois do resample:")
+print(np.unique(y_treino, return_counts=True))
+
+print("len do teste")
+print(np.unique(y_teste, return_counts=True))
 
 

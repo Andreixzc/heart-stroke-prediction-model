@@ -150,24 +150,25 @@ y_base = df_novo.iloc[:, 19].values # Y_base contem os labels
 
 # print(np.unique(y_base, return_counts=True))
 
-# x_train, x_test, y_train, y_test = train_test_split(x_base, y_base)
+x_train, x_test, y_train, y_test = train_test_split(x_base, y_base)
+
 # import pickle
 # with open('raw.pkl', 'wb') as f:
 #   pickle.dump([x_train,x_test,y_train,y_test], f)
 
-# def reportSample(x_resampled,y_resampled,name):
-#     print(name)
-#     from sklearn.ensemble import RandomForestClassifier
-#     from sklearn.metrics import classification_report, fbeta_score,roc_auc_score
-#     rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
-#     rf_classifier.fit(x_resampled,y_resampled)
-#     from sklearn.metrics import accuracy_score
-#     previsoes = rf_classifier.predict(x_test)
-#     report = classification_report(y_test, previsoes)
-#     probabilidades = rf_classifier.predict_proba(x_test)[:, 1]
-#     auc = roc_auc_score(y_test, probabilidades)
-#     print(report)
-#     print("AUC = ",auc)
+def reportSample(x_resampled,y_resampled,name):
+    print(name)
+    from sklearn.ensemble import RandomForestClassifier
+    from sklearn.metrics import classification_report, fbeta_score,roc_auc_score
+    rf_classifier = RandomForestClassifier(n_estimators=100, random_state=42)
+    rf_classifier.fit(x_resampled,y_resampled)
+    from sklearn.metrics import accuracy_score
+    previsoes = rf_classifier.predict(x_test)
+    report = classification_report(y_test, previsoes)
+    probabilidades = rf_classifier.predict_proba(x_test)[:, 1]
+    auc = roc_auc_score(y_test, probabilidades)
+    print(report)
+    print("AUC = ",auc)
 
 #RandomOverSampler
 # from imblearn.over_sampling import RandomOverSampler
@@ -177,15 +178,14 @@ y_base = df_novo.iloc[:, 19].values # Y_base contem os labels
 
 
 
-# NearMiss
-# from imblearn.under_sampling import NearMiss
-# nearmiss = NearMiss(version=2)
-# print("Antes do resample:")
-# print(np.unique(y_train,return_counts=True))
-# x_resampled, y_resampled = nearmiss.fit_resample(x_train, y_train)
-# print("Depois do resample:")
-# print(np.unique(y_resampled,return_counts=True))
-# reportSample(x_resampled,y_resampled,"NearMiss underSample")
+from imblearn.under_sampling import NearMiss
+nearmiss = NearMiss(version=2)
+print("Antes do resample:")
+print(np.unique(y_train,return_counts=True))
+x_resampled, y_resampled = nearmiss.fit_resample(x_train, y_train)
+print("Depois do resample:")
+print(np.unique(y_resampled,return_counts=True))
+reportSample(x_resampled,y_resampled,"NearMiss underSample")
 
 
 # from imblearn.over_sampling import SMOTE
@@ -194,9 +194,9 @@ y_base = df_novo.iloc[:, 19].values # Y_base contem os labels
 # reportSample(x_resampled,y_resampled,"Smote over sampling")
 
 
-# import pickle
-# with open('base.pkl', 'wb') as f:
-#   pickle.dump([x_resampled,x_test,y_resampled,y_test], f)
+import pickle
+with open('raw1.pkl', 'wb') as f:
+  pickle.dump([x_resampled,x_test,y_resampled,y_test], f)
 
 
 
