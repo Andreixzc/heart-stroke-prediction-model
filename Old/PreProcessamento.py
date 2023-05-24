@@ -63,6 +63,11 @@ from sklearn.model_selection import train_test_split
 #Chamamos a funcao train_test_split passando a base de dados sem o atributo de classe, e o atributo de classe
 #Essa funcao retorna os dados dividos para treino e para o teste.(A proporção é definida pelo parametro.)
 X_treino, X_teste, y_treino, y_teste = train_test_split(x_base, y_base, test_size = 0.20, random_state = 0)
+
+import pickle
+with open('raw1.pkl', 'wb') as f:
+  pickle.dump([X_treino, X_teste, y_treino, y_teste], f)
+
 print("len do treino antes do resample:")
 print(np.unique(y_treino, return_counts=True))
 
