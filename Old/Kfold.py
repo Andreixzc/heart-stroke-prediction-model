@@ -202,7 +202,7 @@ def k_fold_cross_validation_com_grid(k, model, dataset):
     return scores
 
 
-def k_fold_cross_validation_com_grid2(k, model, dataset):
+def k_fold_cross_validation_com_grid_e_under(k, model, dataset):
     X_train = dataset[0]  # Características de treino
     X_test = dataset[1]  # Características de teste
     y_train = dataset[2]  # Rótulos de treino
@@ -217,6 +217,7 @@ def k_fold_cross_validation_com_grid2(k, model, dataset):
 
     params = {
         'criterion':  ['gini', 'entropy'],
+        'max_depth':  [None, 2, 4, 6, 8, 10],
         'max_features': [None, 'sqrt', 'log2', 0.2, 0.4, 0.6, 0.8],
     }
 

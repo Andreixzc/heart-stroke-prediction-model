@@ -1,0 +1,48 @@
+Rf com over:
+Relatorio Final do conjunto inteiro de dados (sem k-fold):
+              precision    recall  f1-score   support
+
+           0       0.95      0.99      0.97       968
+           1       0.12      0.02      0.03        54
+
+    accuracy                           0.94      1022
+   macro avg       0.54      0.51      0.50      1022
+weighted avg       0.90      0.94      0.92      1022
+
+------------------------------
+Rf com under:
+Relatorio Final do conjunto inteiro de dados (sem k-fold):
+              precision    recall  f1-score   support
+
+           0       0.96      0.07      0.13       968
+           1       0.05      0.94      0.10        54
+
+    accuracy                           0.12      1022
+   macro avg       0.51      0.51      0.12      1022
+weighted avg       0.91      0.12      0.13      1022
+
+------------------------------
+DT com over:
+Relatorio Final do conjunto inteiro de dados (sem k-fold):
+              precision    recall  f1-score   support
+
+           0       0.95      0.97      0.96       968
+           1       0.14      0.09      0.11        54
+
+    accuracy                           0.92      1022
+   macro avg       0.54      0.53      0.54      1022
+weighted avg       0.91      0.92      0.91      1022
+
+------------------------------
+DT com under:
+Relatorio Final do conjunto inteiro de dados (sem k-fold):
+              precision    recall  f1-score   support
+
+           0       0.95      0.06      0.12       968
+           1       0.05      0.94      0.10        54
+
+    accuracy                           0.11      1022
+   macro avg       0.50      0.50      0.11      1022
+weighted avg       0.90      0.11      0.12      1022
+
+------------------------------

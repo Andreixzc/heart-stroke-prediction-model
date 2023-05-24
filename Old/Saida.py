@@ -1,3 +1,7 @@
+import sys
+
+# Redirecionar a saída para um arquivo de texto
+sys.stdout = open('output.txt', 'w')
 import pickle
 from imblearn.over_sampling import RandomOverSampler
 import numpy as np
@@ -71,11 +75,11 @@ def k_fold_cross_validation_com_grid_e_under(k, model, dataset):
         fscore_values.append(fscore)  # Adicionar fscore à lista
 
         # Relatório de classificação do fold
-        print(f"Fold {len(scores)}:")
-        print("Melhores parametros para o fold:",len(scores))
-        print(best_params)
-        print(classification_report(y_val_fold, y_pred))
-        print("------------------------------")
+        # print(f"Fold {len(scores)}:")
+        # print("Melhores parametros para o fold:",len(scores))
+        # print(best_params)
+        # print(classification_report(y_val_fold, y_pred))
+        # print("------------------------------")
 
     # Avaliação final no conjunto de teste
     y_pred_test = model.predict(X_test)
@@ -96,15 +100,15 @@ def k_fold_cross_validation_com_grid_e_under(k, model, dataset):
     mean_recall_scores = [sum(scores) / len(scores) for scores in zip(*recall_scores)]
     
 
-    # Exibição das médias e intervalos de confiança
-    print("Intervalo de confiança do Fscore: ",calcular_media_colunas(fscore_values))
-    print("Intervalo de confiança do recall: ",calcular_media_colunas(recall_values))
-    print("Intervalo de confiança da precision: ",calcular_media_colunas(precision_values))
-    print("--------------------------------------------------------------------")
-    print("Media recall superior e inferior:",mean_recall_scores)
-    print("Media fscore superior e inferior:",mean_f1_scores)
-    print("Media precision superior e inferior:",mean_precision_scores)
-    #Relatório de classificação do conjunto de teste
+    # # Exibição das médias e intervalos de confiança
+    # print("Intervalo de confiança do Fscore: ",calcular_media_colunas(fscore_values))
+    # print("Intervalo de confiança do recall: ",calcular_media_colunas(recall_values))
+    # print("Intervalo de confiança da precision: ",calcular_media_colunas(precision_values))
+    # print("--------------------------------------------------------------------")
+    # print("Media recall superior e inferior:",mean_recall_scores)
+    # print("Media fscore superior e inferior:",mean_f1_scores)
+    # print("Media precision superior e inferior:",mean_precision_scores)
+     # Relatório de classificação do conjunto de teste
     print("Relatorio Final do conjunto inteiro de dados (sem k-fold):")
     print(classification_report(y_test, y_pred_test))
     print("------------------------------")
@@ -169,12 +173,12 @@ def k_fold_cross_validation_com_grid_e_over(k, model, dataset):
         recall_values.append(recall)  # Adicionar recall à lista
         fscore_values.append(fscore)  # Adicionar fscore à lista
 
-        #Relatório de classificação do fold
-        print(f"Fold {len(scores)}:")
-        print("Melhores parametros para o fold:",len(scores))
-        print(best_params)
-        print(classification_report(y_val_fold, y_pred))
-        print("------------------------------")
+         # Relatório de classificação do fold
+        # print(f"Fold {len(scores)}:")
+        # print("Melhores parametros para o fold:",len(scores))
+        # print(best_params)
+        # print(classification_report(y_val_fold, y_pred))
+        # print("------------------------------")
 
     # Avaliação final no conjunto de teste
     y_pred_test = model.predict(X_test)
@@ -196,19 +200,18 @@ def k_fold_cross_validation_com_grid_e_over(k, model, dataset):
     
 
     # # Exibição das médias e intervalos de confiança
-    print("Intervalo de confiança do Fscore: ",calcular_media_colunas(fscore_values))
-    print("Intervalo de confiança do recall: ",calcular_media_colunas(recall_values))
-    print("Intervalo de confiança da precision: ",calcular_media_colunas(precision_values))
-    print("--------------------------------------------------------------------")
-    print("Media recall superior e inferior:",mean_recall_scores)
-    print("Media fscore superior e inferior:",mean_f1_scores)
-    print("Media precision superior e inferior:",mean_precision_scores)
+    # print("Intervalo de confiança do Fscore: ",calcular_media_colunas(fscore_values))
+    # print("Intervalo de confiança do recall: ",calcular_media_colunas(recall_values))
+    # print("Intervalo de confiança da precision: ",calcular_media_colunas(precision_values))
+    # print("--------------------------------------------------------------------")
+    # print("Media recall superior e inferior:",mean_recall_scores)
+    # print("Media fscore superior e inferior:",mean_f1_scores)
+    # print("Media precision superior e inferior:",mean_precision_scores)
 
     # Relatório de classificação do conjunto de teste
     print("Relatorio Final do conjunto inteiro de dados (sem k-fold):")
     print(classification_report(y_test, y_pred_test))
     print("------------------------------")
-
 
 rf = RandomForestClassifier()
 dt = DecisionTreeClassifier()
@@ -222,3 +225,8 @@ print("DT com over:")
 k_fold_cross_validation_com_grid_e_over(5,dt,dataset)
 print("DT com under:")
 k_fold_cross_validation_com_grid_e_under(5,dt,dataset)
+# Fechar o arquivo de texto
+sys.stdout.close()
+
+# Restaurar a saída padrão
+sys.stdout = sys.__stdout__
