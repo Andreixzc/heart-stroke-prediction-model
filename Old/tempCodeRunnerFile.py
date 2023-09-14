@@ -1,2 +1,0 @@
-k_fold_cross_validation_com_grid_e_under_completo(5,dt,dataset)
-# k_fold_cross_validation_com_grid_e_under_parcial(5,dt,dataset)
